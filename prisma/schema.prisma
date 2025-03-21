@@ -8,9 +8,10 @@ datasource db {
 }
 
 model User {
-  id            String @id @default(cuid())
-  username      String
-  email         String @unique
-  contactNumber Int    @unique
-  password      String
+  id             String  @id @default(cuid())
+  username       String
+  email          String  @unique
+  contactNumber  String  @unique
+  password       String
+  isMailVerified Boolean @default(false)
 }
