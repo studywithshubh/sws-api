@@ -67,4 +67,19 @@ export const signup = async (req: Request, res: Response) => {
         console.error(error);
         res.status(500).json({ message: "Internal server error" });
     }
-}; 
+};
+
+export const filter = async (req:Request , res:Response) => {
+    await prisma.user.deleteMany({
+        where: {
+            isMailVerified: false
+        }
+    })
+
+    const data = await prisma.user.findMany();
+
+    res.status(200).json({
+        message: "Deleted all the unverified users!!",
+        data
+    })
+}
