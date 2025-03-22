@@ -102,52 +102,84 @@ export const verify_email = async (req:Request , res:Response) => {
     }
 }
 
-export const signin = async (req:Request , res:Response) => {
+export const signin = async (req: Request, res: Response) => {
     try {
         const result = signinValidationSchema.safeParse(req.body);
 
         // If validation fails, return an error
         if (!result.success) {
             res.status(400).json({
-                message: 'Validation error',
+                message: "Validation error",
                 errors: result.error.flatten().fieldErrors,
             });
             return;
         }
 
-        const { email,  password } = result.data;
-        
-        const user = await prisma.user.findFirst({
-            where: {
-                email
-            }
-        })
+        const { email, password } = result.data;
+
+        // Find the user in the database
+        const user = await prisma.user.findUnique({
+            where: { email },
+        });
 
         if (!user) {
             res.status(400).json({
-                message: 'User Not Found'
+                message: "User Not Found"
             });
             return;
         }
 
-        const matchPassword = await bcrypt.compare(password , user.password);
-        if (!matchPassword) {
-            res.status(401).json({
-                message: "Incorrect Password!"
+        if (user.isMailVerified === false) {
+            res.status(400).json({
+                message: "Cannot Login!, Please Verify Your Email First!"
             })
             return;
         }
 
-        // if everything is up!, Generate a Token!!
+        // Compare password with hashed password in DB
+        const matchPassword = await bcrypt.compare(password, user.password);
+        if (!matchPassword) {
+            res.status(401).json({
+                message: "Incorrect Password!"
+            });
+            return;
+        }
+
+        // Generate JWT token
+        const token = jwt.sign(
+            {
+                id: user.id,
+                email: user.email
+            },
+            JWT_USER_SECRET,
+            {
+                expiresIn: "4d" // Token expires in 4 day
+            }
+        );
+
+        // Set the JWT token as an HTTP-only cookie
+        res.cookie("token", token, {
+            httpOnly: true, // Prevents JavaScript access (more secure)
+            secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+            sameSite: "strict", // Prevent CSRF attacks
+            maxAge: 4 * 24 * 60 * 60 * 1000, // 4 days
+        });
+
         res.status(200).json({
-            message: "Will implement COOKIE based Authentication!!!"
-        })
+            message: "User Logged In Successfully!",
+            user: {
+                id: user.id,
+                email: user.email
+            },
+        });        
 
-
-    } catch(error) {
-
-    } 
-}
+    } catch (error) {
+        console.error("Signin Error:", error);
+        res.status(500).json({
+            message: "Something Went Wrong, Please Try Again Later"
+        });
+    }
+};
 
 export const filter = async (req:Request , res:Response) => {
     await prisma.user.deleteMany({
