@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
-import { any, z } from "zod";
+import { z } from "zod";
 import bcrypt from "bcrypt";
+import jwt from 'jsonwebtoken';
 import { PrismaClient } from "@prisma/client";
 import { FINAL_MAIL_VERIFICATION, sendOtp } from "../utils/otp_mail_verification";
+import { JWT_USER_SECRET } from "../config";
 
 const prisma = new PrismaClient();
 
@@ -10,6 +12,11 @@ const signupValidationSchema = z.object({
     username: z.string().min(3),
     email: z.string().email(),
     contactNumber: z.string().max(10),
+    password: z.string().min(6),
+});
+
+const signinValidationSchema = z.object({
+    email: z.string().email(),
     password: z.string().min(6),
 });
 
@@ -70,7 +77,9 @@ export const signup = async (req: Request, res: Response) => {
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({
+            message: "Something Went Wrong, Please Try Again Later"
+        });
     }
 };
 
@@ -91,6 +100,53 @@ export const verify_email = async (req:Request , res:Response) => {
         });
         return;
     }
+}
+
+export const signin = async (req:Request , res:Response) => {
+    try {
+        const result = signinValidationSchema.safeParse(req.body);
+
+        // If validation fails, return an error
+        if (!result.success) {
+            res.status(400).json({
+                message: 'Validation error',
+                errors: result.error.flatten().fieldErrors,
+            });
+            return;
+        }
+
+        const { email,  password } = result.data;
+        
+        const user = await prisma.user.findFirst({
+            where: {
+                email
+            }
+        })
+
+        if (!user) {
+            res.status(400).json({
+                message: 'User Not Found'
+            });
+            return;
+        }
+
+        const matchPassword = await bcrypt.compare(password , user.password);
+        if (!matchPassword) {
+            res.status(401).json({
+                message: "Incorrect Password!"
+            })
+            return;
+        }
+
+        // if everything is up!, Generate a Token!!
+        res.status(200).json({
+            message: "Will implement COOKIE based Authentication!!!"
+        })
+
+
+    } catch(error) {
+
+    } 
 }
 
 export const filter = async (req:Request , res:Response) => {
