@@ -8,12 +8,56 @@ datasource db {
 }
 
 model User {
-  id                 String   @id @default(cuid())
+  id                 String          @id @default(cuid())
   username           String
-  email              String   @unique
-  contactNumber      String   @unique
+  email              String          @unique
+  contactNumber      String          @unique
   password           String
-  isMailVerified     Boolean  @default(false)
-  otpForVerification String   @default("")
-  UserAddedAt        DateTime @default(now())
+  isMailVerified     Boolean         @default(false)
+  otpForVerification String          @default("")
+  UserAddedAt        DateTime        @default(now())
+  purchases          UserPurchases[]
+}
+
+model Course {
+  id          Int             @id @default(autoincrement())
+  title       String
+  imageUrl    String
+  description String
+  content     CourseContent[]
+  purchasedBy UserPurchases[]
+}
+
+model Content {
+  id               Int             @id @default(autoincrement())
+  type             String          @default("folder")
+  title            String
+  description      String?
+  thumbnail        String?
+  parentId         Int?
+  parent           Content?        @relation("ContentToContent", fields: [parentId], references: [id])
+  children         Content[]       @relation("ContentToContent")
+  courses          CourseContent[]
+  createdAt        DateTime        @default(now())
+  notionMetadataId Int?
+  commentsCount    Int             @default(0)
+}
+
+model UserPurchases {
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  course     Course   @relation(fields: [courseId], references: [id])
+  courseId   Int
+  assignedAt DateTime @default(now())
+
+  @@id([userId, courseId])
+}
+
+model CourseContent {
+  course    Course  @relation(fields: [courseId], references: [id])
+  courseId  Int
+  content   Content @relation(fields: [contentId], references: [id])
+  contentId Int
+
+  @@id([courseId, contentId])
 }
