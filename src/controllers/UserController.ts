@@ -210,3 +210,11 @@ export const getAllUsers = async (req:Request , res:Response) => {
         finalUserArray
     })
 }
+
+export const test = (req:Request , res:Response) => {
+
+    console.log((req as any).user.email);
+
+    
+    
+}
