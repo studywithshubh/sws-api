@@ -1,24 +1,13 @@
 import { Request, Response } from "express";
-import { z } from "zod";
 import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from "@prisma/client";
 import { FINAL_MAIL_VERIFICATION, sendOtp } from "../utils/otp_mail_verification";
 import { JWT_USER_SECRET } from "../config";
+import { signinValidationSchema, signupValidationSchema } from "../utils/zodSchema";
 
 const prisma = new PrismaClient();
 
-const signupValidationSchema = z.object({
-    username: z.string().min(3),
-    email: z.string().email(),
-    contactNumber: z.string().max(10),
-    password: z.string().min(6),
-});
-
-const signinValidationSchema = z.object({
-    email: z.string().email(),
-    password: z.string().min(6),
-});
 
 export const signup = async (req: Request, res: Response) => {
     try {
@@ -196,17 +185,17 @@ export const filter = async (req:Request , res:Response) => {
     })
 }
 
-
-interface UserResponse {
-    username: string;
-    email: string;
-    contactNumber: string;
-    isMailVerified: boolean;
-}
-
 export const getAllUsers = async (req:Request , res:Response) => {
     const USERS = await prisma.user.findMany();
-    let finalUserArray: UserResponse[] = [];
+    // let finalUserArray: UserResponse[] = [];
+
+    let finalUserArray: {
+        username: string;
+        email: string;
+        contactNumber: string;
+        isMailVerified: boolean;
+    }[] = [];
+
     
     USERS.forEach(user => {
         finalUserArray.push({
