@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
+import { FINAL_MAIL_VERIFICATION, sendOtp } from "../utils/otp_mail_verification";
 
 const prisma = new PrismaClient();
 
@@ -47,7 +48,7 @@ export const signup = async (req: Request, res: Response) => {
         // HASHING THE PASSWORD:
 
         const hashedPassword = await bcrypt.hash(password, 10);
-
+        const otpGenerated = Math.floor(100000 + Math.random() * 900000).toString(); // SToring OTP in DB Here FOr Further VErification
         // STORING the user to Database!
     
         const USER = await prisma.user.create({
@@ -55,12 +56,16 @@ export const signup = async (req: Request, res: Response) => {
                 username: username,
                 email: email,
                 contactNumber: contactNumber,
-                password: hashedPassword
+                password: hashedPassword,
+                otpForVerification: otpGenerated // THE GENERATED OTP IS STORED IMMEDIATELY IN THE DATABASE!!
             }
         });
 
+        // Otp SENT To the User for Verification
+        await sendOtp(email , otpGenerated);
+
         res.json({
-            message: `${USER.username} SignedUp successfully To SWS`
+            message: `OTP Sent to ${USER.email} for verification!`,
         })
 
     } catch (error) {
@@ -68,6 +73,25 @@ export const signup = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+export const verify_email = async (req:Request , res:Response) => {
+    const { email , otpEntered } = req.body;
+    const user = await prisma.user.findFirst({
+        where: {
+            email
+        }
+    });
+
+    if (user?.email === email) {
+        FINAL_MAIL_VERIFICATION(otpEntered , email , res)
+    }
+    else {
+        res.status(400).json({
+            message: "Enter the correct email address, the email which you entered while SignUp!"
+        });
+        return;
+    }
+}
 
 export const filter = async (req:Request , res:Response) => {
     await prisma.user.deleteMany({
