@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { z } from "zod";
+import { any, z } from "zod";
 import bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
 import { FINAL_MAIL_VERIFICATION, sendOtp } from "../utils/otp_mail_verification";
@@ -105,5 +105,31 @@ export const filter = async (req:Request , res:Response) => {
     res.status(200).json({
         message: "Deleted all the unverified users!!",
         data
+    })
+}
+
+
+interface UserResponse {
+    username: string;
+    email: string;
+    contactNumber: string;
+    isMailVerified: boolean;
+}
+
+export const getAllUsers = async (req:Request , res:Response) => {
+    const USERS = await prisma.user.findMany();
+    let finalUserArray: UserResponse[] = [];
+    
+    USERS.forEach(user => {
+        finalUserArray.push({
+            username: user.username,
+            email: user.email,
+            contactNumber: user.contactNumber,
+            isMailVerified: user.isMailVerified
+        })
+    })
+    res.json({
+        message: "All the users in the Database!",
+        finalUserArray
     })
 }
