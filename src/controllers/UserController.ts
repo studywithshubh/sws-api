@@ -216,13 +216,45 @@ export const getAllUsers = async (req:Request , res:Response) => {
     })
 }
 
-export const test = (req:Request , res:Response) => {
+export const me = async (req:Request , res:Response) => {
+    try {
+        if (!(req as any).user) {
+            res.status(401).json({
+                message: "ACCESS DENIED"
+            })
+        }
+        
+        const userId = (req as any).user.id;
 
-    console.log((req as any).user.email);
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        })
 
-    res.status(200).json({
-        user: (req as any).user
-    })
-    
-    
+        if (!user) {
+            res.status(400).json({
+                message: "Sorry User Not Found!"
+            })
+        }
+        
+        const finalUserData = {
+            role: user?.role,
+            username: user?.username,
+            email: user?.email,
+            contactNumber: user?.contactNumber,
+            isMailVerified: user?.isMailVerified,
+            userAddedAt: user?.UserAddedAt
+        }
+
+        res.status(200).json({
+            finalUserData
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            message: 'Something Went Wrong, Please Try Again Later',
+            error
+        });
+    }
 }
