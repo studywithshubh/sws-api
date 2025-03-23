@@ -215,6 +215,9 @@ export const test = (req:Request , res:Response) => {
 
     console.log((req as any).user.email);
 
+    res.status(200).json({
+        user: (req as any).user
+    })
     
     
 }
