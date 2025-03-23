@@ -40,18 +40,17 @@ model Course {
 }
 
 model Content {
-  id               Int             @id @default(autoincrement())
-  type             String          @default("folder")
-  title            String
-  description      String?
-  thumbnail        String?
-  parentId         Int?
-  parent           Content?        @relation("ContentToContent", fields: [parentId], references: [id])
-  children         Content[]       @relation("ContentToContent")
-  courses          CourseContent[]
-  createdAt        DateTime        @default(now())
-  notionMetadataId Int?
-  commentsCount    Int             @default(0)
+  id          Int             @id @default(autoincrement())
+  type        String          @default("folder")
+  title       String
+  description String?
+  videoUrl    String?
+  notesUrl    String?
+  parentId    Int?
+  parent      Content?        @relation("ContentToContent", fields: [parentId], references: [id])
+  children    Content[]       @relation("ContentToContent")
+  courses     CourseContent[]
+  createdAt   DateTime        @default(now())
 }
 
 model UserPurchases {

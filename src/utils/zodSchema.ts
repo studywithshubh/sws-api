@@ -20,3 +20,12 @@ export const createCourseValidationSchema = z.object({
     couponCode: z.string().optional(),
     discountedPrice: z.number().optional(),
 });
+
+export const createContentValidationSchema = z.object({
+    type: z.enum(['folder', 'file']),
+    title: z.string().min(1, 'Title is required'),
+    description: z.string().optional(),
+    videoUrl: z.string().optional(), 
+    notesUrl: z.string().optional(), 
+    parentId: z.number().optional(),
+});
