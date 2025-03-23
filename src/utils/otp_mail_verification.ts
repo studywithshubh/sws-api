@@ -56,7 +56,7 @@ export const FINAL_MAIL_VERIFICATION = async (otpEntered:string , mail:string , 
                     email: mail
                 },
                 data: {
-                    otpForVerification: "VERIFICATION_DONE"
+                    otpForVerification: "MAIL_VERIFICATION_DONE"
                 }
             })
             res.status(200).json({
