@@ -11,3 +11,12 @@ export const signinValidationSchema = z.object({
     email: z.string().email(),
     password: z.string().min(6),
 });
+
+export const createCourseValidationSchema = z.object({
+    title: z.string(),
+    imageUrl: z.string(),
+    description: z.string(),
+    price: z.number(),
+    couponCode: z.string().optional(),
+    discountedPrice: z.number().optional(),
+});

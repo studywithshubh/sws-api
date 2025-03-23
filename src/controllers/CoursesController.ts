@@ -1,0 +1,58 @@
+import { Request, Response } from "express";
+import { createCourseValidationSchema } from "../utils/zodSchema";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
+
+
+export const createCourse = async (req:Request , res:Response) => { 
+    try {
+        const result = createCourseValidationSchema.safeParse(req.body);
+
+        // If validation fails, return an error
+        if (!result.success) {
+            res.status(400).json({
+                message: 'Validation error',
+                errors: result.error.flatten().fieldErrors,
+            });
+            return;
+        }
+        
+
+
+        const { title , imageUrl , description , price , couponCode , discountedPrice } = result.data;
+
+        // Check if course already exists
+        const existingCourse = await prisma.course.findFirst({
+            where: {
+                title: title
+            }
+        });
+        if (existingCourse) {
+            res.status(400).json({
+                message: "Course already exists!!"
+            });
+            return;
+        }
+
+        const course = await prisma.course.create({
+            data: {
+                title,
+                imageUrl,
+                description,
+                price,
+                couponCode,
+                discountedPrice
+            }
+        })
+
+        res.status(200).json({
+            message: "Course Created Successfully!!",
+            course
+        })
+
+    } catch(error) {
+        res.status(500).json({
+            message: "Something Went Wrong, Please Try Again Later"
+        })
+    }
+}

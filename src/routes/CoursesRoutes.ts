@@ -1,5 +1,6 @@
 import { Router } from "express";
+import { createCourse } from "../controllers/CoursesController";
 
 export const CoursesRouter = Router();
 
-CoursesRouter.get('/' , () => {});
+CoursesRouter.post('/create' , createCourse);
