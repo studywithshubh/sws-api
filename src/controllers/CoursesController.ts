@@ -56,3 +56,10 @@ export const createCourse = async (req:Request , res:Response) => {
         })
     }
 }
+
+export const getAllCourses = async (req:Request , res:Response) => {
+    const COURSES = await prisma.course.findMany();
+    res.status(200).json({
+        COURSES
+    })
+}
