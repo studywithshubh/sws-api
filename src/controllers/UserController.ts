@@ -190,23 +190,28 @@ export const getAllUsers = async (req:Request , res:Response) => {
     // let finalUserArray: UserResponse[] = [];
 
     let finalUserArray: {
+        id: String;
+        role: String;
         username: string;
         email: string;
         contactNumber: string;
         isMailVerified: boolean;
+        userAddedAt: Date;
     }[] = [];
 
     
     USERS.forEach(user => {
         finalUserArray.push({
+            id: user.id,
+            role: user.role,
             username: user.username,
             email: user.email,
             contactNumber: user.contactNumber,
-            isMailVerified: user.isMailVerified
+            isMailVerified: user.isMailVerified,
+            userAddedAt: user.UserAddedAt
         })
     })
     res.json({
-        message: "All the users in the Database!",
         finalUserArray
     })
 }
