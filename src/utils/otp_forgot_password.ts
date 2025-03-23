@@ -1,9 +1,11 @@
-import nodemailer from "nodemailer";
-import { SWS_SENDERMAIL_VERIFICATION, SWSMAIL_PASSWORD } from "../config";
-import { PrismaClient } from "@prisma/client";
 import { Response } from "express";
+import { SWS_SENDERMAIL_VERIFICATION, SWSMAIL_PASSWORD } from "../config";
+import nodemailer from "nodemailer";
+import bcrypt from 'bcrypt';
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
+
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -13,21 +15,20 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-
-export const sendOtp = async (to: string, otpGenerated: string) => {
+export const sendOtp_forgotPassword = async (to: string , otpGenerated:string) => {
     const inServerGeneratedOtp = otpGenerated;
 
     const mailOptions = {
         from: SWS_SENDERMAIL_VERIFICATION,
         to,
-        subject: "SWS Email Verification",
-        text: `HERE IS YOUR OTP: ${inServerGeneratedOtp} FOR VERIFICATION FOR STUDYWITHSHUBH`,
+        subject: "Otp For Password Reset for SWS",
+        text: `HERE IS YOUR OTP: ${inServerGeneratedOtp} FOR Password Reset FOR STUDYWITHSHUBH`,
     };
-
+    
     await transporter.sendMail(mailOptions);
 };
 
-export const FINAL_MAIL_VERIFICATION = async (otpEntered: string, mail: string, res: Response) => {
+export const resetPassword = async (otpEntered:string , mail:string , newPassword:string , res:Response) => {
     const user = await prisma.user.findFirst({
         where: {
             email: mail
@@ -41,13 +42,15 @@ export const FINAL_MAIL_VERIFICATION = async (otpEntered: string, mail: string, 
         return;
     }
     else {
-        if (user.otpForVerification === otpEntered) {
+        if (user.otpForResetPassword === otpEntered) {
+            const newHashedPassword = await bcrypt.hash(newPassword, 10);
+
             await prisma.user.update({
                 where: {
                     email: mail
                 },
                 data: {
-                    isMailVerified: true
+                    password: newHashedPassword
                 }
             })
 
@@ -56,11 +59,12 @@ export const FINAL_MAIL_VERIFICATION = async (otpEntered: string, mail: string, 
                     email: mail
                 },
                 data: {
-                    otpForVerification: "MAIL_VERIFICATION_DONE"
+                    otpForResetPassword: "PASSWORD_RESET_DONE"
                 }
             })
+
             res.status(200).json({
-                message: `${user.username}'s EMAIL VERIFIED SUCCESFULLY!!`
+                message: `${user.username}'s New Password Set Successfully!!`
             })
             return;
         }
