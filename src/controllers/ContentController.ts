@@ -47,15 +47,15 @@ export const createContent = async (req: Request, res: Response) => {
         }
 
         // Check if content with the same title already exists
-        const existingContent = await prisma.content.findFirst({
-            where: { title },
-        });
-        if (existingContent) {
-            res.status(400).json({
-                message: 'Content with this title already exists',
-            });
-            return
-        }
+        // const existingContent = await prisma.content.findFirst({
+        //     where: { title },
+        // });
+        // if (existingContent) {
+        //     res.status(400).json({
+        //         message: 'Content with this title already exists',
+        //     });
+        //     return
+        // }
 
         // Create the content
         const content = await prisma.content.create({

@@ -19,5 +19,5 @@ app.get("/" , (req , res) => {
 })
 
 app.listen(PORT , () => {
-    console.log(`BACKEND IS HOSTED : ${PORT}`)
+    console.log(`BACKEND IS HOSTED : http://localhost:${PORT}`)
 });
