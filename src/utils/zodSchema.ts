@@ -25,7 +25,20 @@ export const createContentValidationSchema = z.object({
     type: z.enum(['folder', 'file']),
     title: z.string().min(1, 'Title is required'),
     description: z.string().optional(),
-    videoUrl: z.string().optional(), 
-    notesUrl: z.string().optional(), 
+    videoUrl: z.string().optional(),
+    notesUrl: z.string().optional(),
     parentId: z.number().optional(),
+});
+
+export const initiatePaymentSchema = z.object({
+    courseId: z.number(),
+    userId: z.string(),
+    couponCode: z.string().optional()
+});
+
+
+export const verifyPaymentSchema = z.object({
+    razorpay_payment_id: z.string(),
+    razorpay_order_id: z.string(),
+    razorpay_signature: z.string()
 });

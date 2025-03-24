@@ -61,7 +61,7 @@ export const signup = async (req: Request, res: Response) => {
         // Otp SENT To the User for Verification
         await sendOtp(email, otpGenerated);
 
-        res.json({
+        res.status(201).json({
             message: `OTP Sent to ${USER.email} for verification!`,
         })
 
