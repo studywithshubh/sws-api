@@ -178,6 +178,15 @@ export const logout = (req:Request, res:Response) => {
     })
 }
 
+export const session = (req:Request , res:Response) => {
+    res.status(200).json({
+        message: {
+            isAuthenticated: true,
+            user: (req as any).user
+        }
+    })
+}
+
 export const filter = async (req: Request, res: Response) => {
     await prisma.user.deleteMany({
         where: {
