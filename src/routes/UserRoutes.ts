@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { filter, forgotPassword, getAllUsers, logout, me, passwordReset, signin, signup, verify_email } from "../controllers/UserController";
 import { UserAuth } from "../middlewares/UserAuthentication";
-import { resetPassword } from "../utils/otp_forgot_password";
 
 export const UserRouter = Router();
 
