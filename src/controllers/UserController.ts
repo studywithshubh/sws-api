@@ -171,6 +171,13 @@ export const signin = async (req: Request, res: Response) => {
     }
 };
 
+export const logout = (req:Request, res:Response) => {
+    res.clearCookie("token");
+    res.status(200).json({
+        message: "User Logged Out Successfully!"
+    })
+}
+
 export const filter = async (req: Request, res: Response) => {
     await prisma.user.deleteMany({
         where: {
