@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { filter, forgotPassword, getAllUsers, logout, me, passwordReset, session, signin, signup, verify_email } from "../controllers/UserController";
+import { filter, forgotPassword, getAllUsers, getUserCourses, logout, me, passwordReset, session, signin, signup, verify_email } from "../controllers/UserController";
 import { UserAuth } from "../middlewares/UserAuthentication";
 
 export const UserRouter = Router();
@@ -14,3 +14,5 @@ UserRouter.get("/me" , UserAuth , me); // PROTECTED ENDPOINT!!
 UserRouter.get("/session" , UserAuth , session) // User Session!, Protected Endpoint!
 UserRouter.post("/send-otp-for-forgot-password" , forgotPassword);
 UserRouter.post("/reset-password" , passwordReset);
+
+UserRouter.get("/my-courses" , UserAuth , getUserCourses); // PROTECTED ENDPOINT!!

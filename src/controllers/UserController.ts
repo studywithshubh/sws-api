@@ -336,3 +336,31 @@ export const passwordReset = async (req: Request, res: Response) => {
         return;
     }
 }
+
+export const getUserCourses = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).user.id;
+
+        const userCourses = await prisma.userPurchases.findMany({
+            where: {
+                userId
+            }
+        });
+
+        if (!userCourses) {
+            res.status(200).json({
+                message: "You dont have any purchased courses yet!"
+            })
+            return
+        }
+
+        res.status(200).json({
+            userCourses
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Something Went Wrong, Please Try Again Later"
+        });
+    }
+}
