@@ -15,7 +15,7 @@ export const signinValidationSchema = z.object({
 export const createCourseValidationSchema = z.object({
     title: z.string(),
     imageUrl: z.string(),
-    description: z.string(),
+    notionUrl: z.string(),
     price: z.number(),
     couponCode: z.string().optional(),
     discountedPrice: z.number().optional(),

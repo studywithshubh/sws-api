@@ -19,7 +19,7 @@ export const createCourse = async (req:Request , res:Response) => {
         
 
 
-        const { title , imageUrl , description , price , couponCode , discountedPrice } = result.data;
+        const { title , imageUrl , notionUrl , price , couponCode , discountedPrice } = result.data;
 
         // Check if course already exists
         const existingCourse = await prisma.course.findFirst({
@@ -38,7 +38,7 @@ export const createCourse = async (req:Request , res:Response) => {
             data: {
                 title,
                 imageUrl,
-                description,
+                notionUrl,
                 price,
                 couponCode,
                 discountedPrice
