@@ -171,14 +171,14 @@ export const signin = async (req: Request, res: Response) => {
     }
 };
 
-export const logout = (req:Request, res:Response) => {
+export const logout = (req: Request, res: Response) => {
     res.clearCookie("token");
     res.status(200).json({
         message: "User Logged Out Successfully!"
     })
 }
 
-export const session = (req:Request , res:Response) => {
+export const session = (req: Request, res: Response) => {
     res.status(200).json({
         message: {
             isAuthenticated: true,
@@ -216,8 +216,15 @@ export const getAllUsers = async (req: Request, res: Response) => {
         userAddedAt: Date;
     }[] = [];
 
-
-    USERS.forEach(user => {
+    USERS.forEach((user: {
+        id: string;
+        role: string;
+        username: string;
+        email: string;
+        contactNumber: string;
+        isMailVerified: boolean;
+        UserAddedAt: Date;
+    }) => {
         finalUserArray.push({
             id: user.id,
             role: user.role,
@@ -226,8 +233,9 @@ export const getAllUsers = async (req: Request, res: Response) => {
             contactNumber: user.contactNumber,
             isMailVerified: user.isMailVerified,
             userAddedAt: user.UserAddedAt
-        })
-    })
+        });
+    });
+
     res.json({
         finalUserArray
     })
@@ -327,7 +335,7 @@ export const passwordReset = async (req: Request, res: Response) => {
     });
 
     if (user?.email === email) {
-        resetPassword(otpEntered , user?.email as string , newPassword , res);
+        resetPassword(otpEntered, user?.email as string, newPassword, res);
     }
     else {
         res.status(400).json({
