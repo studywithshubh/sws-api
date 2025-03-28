@@ -2,10 +2,7 @@ import { Response } from "express";
 import { SWS_SENDERMAIL_VERIFICATION, SWSMAIL_PASSWORD } from "../config";
 import nodemailer from "nodemailer";
 import bcrypt from 'bcrypt';
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
+import prisma from "../db/prisma";
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
