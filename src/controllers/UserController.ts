@@ -169,11 +169,21 @@ export const signin = async (req: Request, res: Response) => {
 };
 
 export const logout = (req: Request, res: Response) => {
-    res.clearCookie("token");
-    res.status(200).json({
-        message: "User Logged Out Successfully!"
-    })
-}
+    try {
+        res.clearCookie("token", { httpOnly: true, secure: true, sameSite: "none" });
+        res.status(200).json({
+            message: "User Logged Out Successfully!"
+        });
+        return
+    } catch (error) {
+        console.error("Logout Error:", error);
+        res.status(500).json({
+            error: "Something went wrong while logging out."
+        });
+        return
+    }
+};
+
 
 export const session = (req: Request, res: Response) => {
     res.status(200).json({
@@ -244,6 +254,7 @@ export const me = async (req: Request, res: Response) => {
             res.status(401).json({
                 message: "ACCESS DENIED"
             })
+            return
         }
 
         const userId = (req as any).user.id;
@@ -258,6 +269,7 @@ export const me = async (req: Request, res: Response) => {
             res.status(400).json({
                 message: "Sorry User Not Found!"
             })
+            return
         }
 
         const finalUserData = {
