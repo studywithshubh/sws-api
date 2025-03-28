@@ -1,14 +1,11 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
-import { PrismaClient } from "@prisma/client";
 import { FINAL_MAIL_VERIFICATION, sendOtp } from "../utils/otp_mail_verification";
 import { JWT_USER_SECRET } from "../config";
 import { signinValidationSchema, signupValidationSchema } from "../utils/zodSchema";
 import { resetPassword, sendOtp_forgotPassword } from "../utils/otp_forgot_password";
-
-const prisma = new PrismaClient();
-
+import prisma from "../db/prisma";
 
 export const signup = async (req: Request, res: Response) => {
     try {

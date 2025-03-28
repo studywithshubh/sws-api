@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { createCourseValidationSchema } from "../utils/zodSchema";
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import prisma from "../db/prisma";
 
 
 export const createCourse = async (req:Request , res:Response) => { 

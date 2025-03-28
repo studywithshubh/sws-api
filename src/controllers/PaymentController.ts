@@ -1,11 +1,8 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
 import { razorpay } from '../utils/razorpay';
 import * as crypto from 'crypto';
 import { initiatePaymentSchema, verifyPaymentSchema } from '../utils/zodSchema';
-
-const prisma = new PrismaClient();
-
+import prisma from '../db/prisma';
 
 export const initiatePayment = async (req: Request, res: Response) => {
     try {
