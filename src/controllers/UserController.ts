@@ -148,7 +148,7 @@ export const signin = async (req: Request, res: Response) => {
         res.cookie("token", token, {
             httpOnly: true, // Prevents JavaScript access (more secure)
             secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-            sameSite: "strict", // Prevent CSRF attacks
+            sameSite: "none", // Prevent CSRF attacks
             maxAge: 4 * 24 * 60 * 60 * 1000, // 4 days
         });
 
