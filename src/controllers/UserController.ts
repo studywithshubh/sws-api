@@ -146,14 +146,41 @@ export const signin = async (req: Request, res: Response) => {
 
         // Set the JWT token as an HTTP-only cookie
 
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production", // Only secure in production
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Strict in production
-            maxAge: 4 * 24 * 60 * 60 * 1000,
-            domain: process.env.NODE_ENV === "production" ? "swsfetest.vercel.app" : undefined,
-            path: "/"
-        });
+        res.status(200)
+            .cookie("token", token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV !== "development",
+                sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
+                maxAge: 4 * 24 * 60 * 60 * 1000, // 4 days
+                // domain: process.env.NODE_ENV === "production" ? ".vercel.app" : undefined,
+                path: "/"
+            })
+            .json({
+                success: true,
+                message: "User Logged In Successfully!",
+                user: {
+                    id: user.id,
+                    email: user.email
+                }
+            });
+        return;
+        // res.status(200).cookie("token", token, {
+        //     httpOnly: true,
+        //     maxAge: 15 * 60 * 1000,
+        //     sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
+        //     secure: process.env.NODE_ENV === "development" ? false : true,
+        // }).json({
+        //     success: true,
+        // });
+
+        // res.cookie("token", token, {
+        //     httpOnly: true,
+        //     secure: process.env.NODE_ENV === "production", // Only secure in production
+        //     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Strict in production
+        //     maxAge: 4 * 24 * 60 * 60 * 1000,
+        //     domain: process.env.NODE_ENV === "production" ? "swsfetest.vercel.app" : undefined,
+        //     path: "/"
+        // });
 
         // res.cookie("token", token, {
         //     httpOnly: true, // Prevents JavaScript access (more secure)
@@ -162,13 +189,13 @@ export const signin = async (req: Request, res: Response) => {
         //     maxAge: 4 * 24 * 60 * 60 * 1000, // 4 days
         // });
 
-        res.status(200).json({
-            message: "User Logged In Successfully!",
-            user: {
-                id: user.id,
-                email: user.email
-            },
-        });
+        // res.status(200).json({
+        //     message: "User Logged In Successfully!",
+        //     user: {
+        //         id: user.id,
+        //         email: user.email
+        //     },
+        // });
 
     } catch (error) {
         console.error("Signin Error:", error);
