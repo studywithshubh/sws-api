@@ -148,12 +148,19 @@ export const signin = async (req: Request, res: Response) => {
 
         res.cookie("token", token, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
+            secure: process.env.NODE_ENV === "production", // Only secure in production
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Strict in production
             maxAge: 4 * 24 * 60 * 60 * 1000,
             domain: process.env.NODE_ENV === "production" ? "swsfetest.vercel.app" : undefined,
             path: "/"
         });
+
+        // res.cookie("token", token, {
+        //     httpOnly: true, // Prevents JavaScript access (more secure)
+        //     secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+        //     sameSite: "none", // Prevent CSRF attacks
+        //     maxAge: 4 * 24 * 60 * 60 * 1000, // 4 days
+        // });
 
         res.status(200).json({
             message: "User Logged In Successfully!",
@@ -173,13 +180,7 @@ export const signin = async (req: Request, res: Response) => {
 
 export const logout = (req: Request, res: Response) => {
     try {
-        res.clearCookie("token" , { 
-            httpOnly: true, 
-            secure: true, 
-            sameSite: "none",
-            domain: process.env.NODE_ENV === "production" ? "swsfetest.vercel.app" : undefined,
-            path: "/"
-        });
+        res.clearCookie("token", { httpOnly: true, secure: true, sameSite: "none" });
         res.status(200).json({
             message: "User Logged Out Successfully!"
         });
