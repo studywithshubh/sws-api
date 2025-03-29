@@ -148,12 +148,22 @@ export const signin = async (req: Request, res: Response) => {
 
         res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production", // Only secure in production
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Strict in production
+            secure: true, // Always secure in production
+            sameSite: "none", // Required for cross-domain
             maxAge: 4 * 24 * 60 * 60 * 1000,
-            domain: process.env.NODE_ENV === "production" ? "swsfetest.vercel.app" : undefined,
+            domain: process.env.NODE_ENV === "production" ? ".vercel.app" : undefined,   
+            // domain: ".vercel.app",
             path: "/"
         });
+
+        // res.cookie("token", token, {
+        //     httpOnly: true,
+        //     secure: process.env.NODE_ENV === "production", // Only secure in production
+        //     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Strict in production
+        //     maxAge: 4 * 24 * 60 * 60 * 1000,
+        //     domain: process.env.NODE_ENV === "production" ? "swsfetest.vercel.app" : undefined,
+        //     path: "/"
+        // });
 
         // res.cookie("token", token, {
         //     httpOnly: true, // Prevents JavaScript access (more secure)
