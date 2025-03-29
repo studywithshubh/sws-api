@@ -12,16 +12,11 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 
-const corsOptions = {
-    origin: [
-        'http://localhost:3000', // Local frontend
-        'https://swsfetest.vercel.app' // Production frontend URL
-    ],
+app.use(cors({
+    origin: 'https://swsfetest.vercel.app', // testing purposes
     credentials: true,
     optionsSuccessStatus: 200
-};
-
-app.use(cors(corsOptions));
+}));
 
 app.use("/api/v1/auth/user", UserRouter);
 app.use("/api/v1/courses", CoursesRouter);
