@@ -12,6 +12,7 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 
+
 const corsOptions = {
     origin: [
         'http://localhost:3000', // Local frontend
