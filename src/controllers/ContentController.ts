@@ -82,3 +82,31 @@ export const createContent = async (req: Request, res: Response) => {
         return
     }
 };
+
+export const getContentById = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const CONTENT = await prisma.content.findUnique({
+        where: {
+            id: parseInt(id)
+        }
+    })
+    res.status(200).json({
+        CONTENT
+    })
+}
+
+export const getContentChildren = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        
+        const children = await prisma.content.findMany({
+            where: { parentId: parseInt(id) },
+            orderBy: { createdAt: 'asc' }
+        });
+
+        res.status(200).json({ children });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to fetch folder content' });
+    }
+};

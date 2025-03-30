@@ -395,22 +395,38 @@ export const getUserCourses = async (req: Request, res: Response) => {
     try {
         const userId = (req as any).user.id;
 
-        const userCourses = await prisma.userPurchases.findMany({
-            where: {
-                userId
+        const userPurchases = await prisma.userPurchases.findMany({
+            where: { userId },
+            include: {
+                course: true // Include the full course details
             }
         });
 
-        if (!userCourses) {
+        if (!userPurchases || userPurchases.length === 0) {
             res.status(200).json({
-                message: "You dont have any purchased courses yet!"
-            })
-            return
+                message: "You don't have any purchased courses yet!",
+                userCourses: []
+            });
+            return;
         }
 
-        res.status(200).json({
-            userCourses
-        })
+        // Transform the data to match frontend expectations
+        const userCourses = userPurchases.map(purchase => ({
+            course: {
+                id: purchase.courseId,
+                title: purchase.course.title,
+                imageUrl: purchase.course.imageUrl,
+                notionUrl: purchase.course.notionUrl,
+                price: purchase.course.price,
+                couponCode: purchase.course.couponCode,
+                discountedPrice: purchase.course.discountedPrice
+            },
+            paymentStatus: purchase.paymentStatus,
+            assignedAt: purchase.assignedAt,
+            amountPaid: purchase.amountPaid
+        }));
+
+        res.status(200).json({ userCourses });
     } catch (error) {
         console.error(error);
         res.status(500).json({
