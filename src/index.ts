@@ -15,8 +15,9 @@ app.use(express.json());
 
 const corsOptions = {
     origin: [
-        'http://localhost:3000', // Local frontend
-        'https://studywithshubh.tech' // Production frontend URL
+        'http://localhost:3000',
+        'https://studywithshubh.tech',
+        'https://www.studywithshubh.tech'
     ],
     credentials: true,
     optionsSuccessStatus: 200

@@ -149,10 +149,11 @@ export const signin = async (req: Request, res: Response) => {
         res.status(200)
             .cookie("token", token, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV !== "development",
-                sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
+                secure: true,
+                sameSite: process.env.NODE_ENV === "none",
                 maxAge: 4 * 24 * 60 * 60 * 1000, // 4 days
-                path: "/"
+                path: "/",
+                domain: process.env.NODE_ENV === 'production' ? 'studywithshubh.tech' : undefined // Include subdomains
             })
             .json({
                 success: true,
