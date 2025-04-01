@@ -16,7 +16,7 @@ app.use(express.json());
 const corsOptions = {
     origin: [
         'http://localhost:3000', // Local frontend
-        'https://swsfetest.vercel.app' // Production frontend URL
+        'https://studywithshubh.tech' // Production frontend URL
     ],
     credentials: true,
     optionsSuccessStatus: 200
