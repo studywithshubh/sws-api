@@ -149,11 +149,11 @@ export const signin = async (req: Request, res: Response) => {
         res.status(200)
             .cookie("token", token, {
                 httpOnly: true,
-                secure: true,
-                sameSite: process.env.NODE_ENV === "none",
+                secure: process.env.NODE_ENV !== "development", // Secure in production
+                sameSite: process.env.NODE_ENV === "development" ? "lax" : "none", // Allow cross-site cookies
                 maxAge: 4 * 24 * 60 * 60 * 1000, // 4 days
-                path: "/",
-                domain: process.env.NODE_ENV === 'production' ? 'studywithshubh.tech' : undefined // Include subdomains
+                domain: process.env.NODE_ENV === "production" ? "studywithshubh.tech" : undefined, // Explicitly set domain in production
+                path: "/"
             })
             .json({
                 success: true,
@@ -163,6 +163,25 @@ export const signin = async (req: Request, res: Response) => {
                     email: user.email
                 }
             });
+
+
+        // res.status(200)
+        //     .cookie("token", token, {
+        //         httpOnly: true,
+        //         secure: true,
+        //         sameSite: process.env.NODE_ENV === "none",
+        //         maxAge: 4 * 24 * 60 * 60 * 1000, // 4 days
+        //         path: "/",
+        //         domain: process.env.NODE_ENV === 'production' ? 'studywithshubh.tech' : undefined // Include subdomains
+        //     })
+        //     .json({
+        //         success: true,
+        //         message: "User Logged In Successfully!",
+        //         user: {
+        //             id: user.id,
+        //             email: user.email
+        //         }
+        //     });
         return;
 
     } catch (error) {
