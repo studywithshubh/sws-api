@@ -233,6 +233,25 @@ export const filter = async (req: Request, res: Response) => {
     })
 }
 
+export const get_unverified_users = async (req:Request , res:Response) => {
+    try {
+        const USERS = await prisma.user.findMany({
+            where: {
+                isMailVerified: false
+            }
+        })
+
+        res.status(200).json(
+            USERS
+        )
+        return;
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Something Went Wrong, Please Try Again!" });
+        return;
+    }
+}
+
 export const getAllUsers = async (req: Request, res: Response) => {
     const USERS = await prisma.user.findMany();
     // let finalUserArray: UserResponse[] = [];
