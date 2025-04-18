@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import { CoursesRouter } from './routes/CoursesRoutes';
 import { ContentRouter } from './routes/ContentRoutes';
 import { PaymentRouter } from './routes/PaymentRoutes';
+import { AvatarRouter } from './routes/AvatarRoutes';
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use("/api/v1/auth/user", UserRouter);
 app.use("/api/v1/courses", CoursesRouter);
 app.use("/api/v1/content", ContentRouter);
 app.use("/api/v1/sws/payment", PaymentRouter);
+app.use("/api/v1/avatar", AvatarRouter);
 
 app.get("/", (req, res) => {
     res.send("SWS NEW SERVER IS UP!!")
