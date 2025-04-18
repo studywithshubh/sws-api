@@ -25,6 +25,16 @@ model User {
   UserAddedAt         DateTime        @default(now())
   purchases           UserPurchases[]
   payments            Payment[]
+  avatar              Avatar[]
+}
+
+model Avatar {
+  id        Int      @id @default(autoincrement())
+  publicId  String   @unique
+  url       String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   // Foreign key to User's Table
 }
 
 model Course {
